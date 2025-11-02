@@ -2,11 +2,9 @@
   const tasksEl = document.getElementById("tasks");
   const emptyEl = document.getElementById("tasks-empty");
 
-  function renderEmpty(show) {
-    emptyEl.hidden = !show;
-  }
+  function renderEmpty(show) { emptyEl.hidden = !show; }
 
-  function taskRow({ id, kind, title, details, cta, action }) {
+  function taskRow({ id, title, details, cta, action }) {
     const row = document.createElement("div");
     row.className = "task-row";
     row.setAttribute("data-id", id);
@@ -22,17 +20,14 @@
 
     const btn = row.querySelector("button");
     let busy = false;
-
     btn.addEventListener("click", async () => {
       if (busy) return;
       busy = true;
       btn.disabled = true;
       btn.textContent = "Working…";
-
       try {
         await action();
-        // Remove the row after success
-        row.remove();
+        row.remove(); // remove task on success
         if (!tasksEl.children.length) renderEmpty(true);
       } catch (e) {
         btn.disabled = false;
@@ -49,7 +44,6 @@
     row.className = "task-row thermostat";
     row.setAttribute("data-id", id);
 
-    // Clamp suggested setpoint
     let setpointC = Math.max(18, Math.min(ambientC - 1, suggestedSetpointC || 25));
     let fan = currentFan || "medium";
 
@@ -108,7 +102,7 @@
     tasksEl.appendChild(row);
   }
 
-  function applyTaskStyles() {
+  function injectStyles() {
     const style = document.createElement("style");
     style.textContent = `
       #tasks { display: grid; gap: 10px; }
@@ -154,8 +148,8 @@
   }
 
   async function load() {
-    applyTaskStyles();
-    tasksEl.innerHTML = "Loading…";
+    injectStyles();
+    tasksEl.textContent = "Loading…";
     try {
       const data = await API.getTasks();
       tasksEl.innerHTML = "";
@@ -164,7 +158,6 @@
       lightTasks.forEach(t =>
         taskRow({
           id: t.id,
-          kind: "light",
           title: `Turn off ${t.name}`,
           details: `Currently on in ${t.room || "unknown room"}`,
           cta: "Turn off",
