@@ -11,7 +11,6 @@
 
   <div class="stage">
     <div class="app-shell has-settings-button" role="application" aria-label="App">
-      <!-- Back button (top-left). Uses history.back() with fallback to Home -->
       <a href="index.html" rel="prev" class="back-button" aria-label="Back" title="Back"
          onclick="if (history.length > 1) { history.back(); return false; }">
         <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -22,22 +21,36 @@
       <main id="content" class="app-content" role="main">
         <section class="card" tabindex="-1">
           <h1>Settings</h1>
-          <p>Connect services to enable energy‑saving automations.</p>
+          <p>Create an account so your progress is saved in the cloud.</p>
 
           <div class="settings-form">
-            <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:8px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                <strong>Google Home (Nest)</strong>
-                <span id="google-status" style="opacity:.8; font-size:.9rem;">Checking…</span>
+            <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:10px;">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <strong>Account</strong>
+                <span id="auth-status" style="opacity:.85;">Checking…</span>
               </div>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button id="google-auth-btn" class="btn">Sign in with Google</button>
-                <button id="google-disconnect-btn" class="btn" style="display:none; background:#6b7280;">Disconnect</button>
+
+              <form id="auth-form" class="auth-form" style="display:grid; gap:8px;">
+                <label>
+                  <span>Username</span>
+                  <input id="auth-username" type="text" required autocomplete="username" />
+                </label>
+                <label>
+                  <span>Password</span>
+                  <input id="auth-password" type="password" required autocomplete="current-password" />
+                </label>
+                <div style="display:flex; gap:8px;">
+                  <button id="btn-login" class="btn" type="submit">Log in</button>
+                  <button id="btn-signup" class="btn" type="button" style="background:#2563eb;">Sign up</button>
+                </div>
+              </form>
+
+              <div id="auth-loggedin" style="display:none;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <span>Signed in as <strong id="auth-name"></strong></span>
+                  <button id="btn-logout" class="btn" style="background:#6b7280;">Log out</button>
+                </div>
               </div>
-              <small style="opacity:.8;">
-                Thermostat control uses Google’s Smart Device Management API. Lights are not exposed by SDM;
-                use vendor integrations or Home Assistant for lights.
-              </small>
             </div>
           </div>
         </section>
