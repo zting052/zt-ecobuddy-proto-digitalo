@@ -22,6 +22,13 @@
         </section>
 
         <section class="card" id="tasks-card">
+          <!-- Level banner on tasks page -->
+          <div class="level-banner" id="tasks-level-banner">
+            <div class="level-title">Level 1</div>
+            <div class="unlock-title">Potatoes</div>
+            <div class="level-progress" aria-label="Progress to next level"><span style="width:0%"></span></div>
+          </div>
+
           <h2>To‑dos</h2>
           <div id="tasks" aria-live="polite">Loading…</div>
           <div id="tasks-empty" hidden>All set! No energy-saving tasks right now.</div>
@@ -56,6 +63,8 @@
     // Point the frontend to your backend. Defaults to localhost for dev.
     window.API_BASE_URL = window.API_BASE_URL || "http://localhost:8787";
   </script>
+  <!-- Add progress engine to enable level tracking on this page -->
+  <script src="scripts/progress.js" defer></script>
   <script src="scripts/api.js" defer></script>
   <script src="scripts/checkbox.js" defer></script>
 </body>
