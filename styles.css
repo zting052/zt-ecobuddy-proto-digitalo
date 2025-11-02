@@ -4,7 +4,8 @@
   --surround: #D4D4D4; /* page background behind the app container */
   --bg: #FFFFFF;       /* app interior background */
   --nav: #322018;      /* navigation bar color */
-  --on-nav: #FFFFFF;   /* icon color on nav (used for hover focus accents) */
+  --on-nav: #FFFFFF;   /* used for hover/focus accents */
+  --icon-tint: #E7DDD6;/* light beige like your screenshot */
   --card: #FFFFFF;
   --text: #111827;
   --focus: #111827;
@@ -147,30 +148,32 @@ h1, h2{
   left: 0;
   right: 0;
   bottom: 0;
-  height: 77px;                 /* increased to 77px */
+  height: 77px;                 /* exact height */
   background: var(--nav);
   color: var(--on-nav);
-  border-top-left-radius: 35px;  /* rounded top corners */
-  border-top-right-radius: 35px; /* rounded top corners */
+  border-top-left-radius: 35px;  /* rounded top corners like screenshot */
+  border-top-right-radius: 35px;
   overflow: hidden;              /* clip children to rounded corners */
 }
 
+/* Center icons vertically, keep horizontal spacing */
 .nav-list{
   margin: 0;
   height: 100%;
   padding: 0 8px;
   list-style: none;
   display: flex;
-  align-items: center;           /* vertically center items */
-  justify-content: space-around; /* keep horizontal spacing */
+  align-items: center;           /* vertical center */
+  justify-content: space-around; /* horizontal spacing */
   gap: 4px;
 }
 
 .nav-item{
-  display: grid;
-  place-items: center;           /* center icon inside each item */
-  width: 56px;                   /* ensures tap target >= 44x44 */
-  height: 100%;                  /* fill nav height to ensure vertical centering */
+  display: flex;
+  align-items: center;           /* vertical center icon within item */
+  justify-content: center;
+  width: 56px;                   /* >= 44x44 tap target */
+  height: 100%;                  /* match nav height for true centering */
   min-height: 44px;
   color: inherit;
   text-decoration: none;
@@ -178,31 +181,34 @@ h1, h2{
   outline: none;
 }
 
-/* Image icons in nav */
+/* Image icons in nav: tint to light beige and slightly soften */
 .nav-icon{
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   display: block;
   object-fit: contain;
-  /* If your icons are dark and hard to see on the dark nav,
-     you can uncomment the next line to turn them white:
-     filter: invert(1) brightness(2);
-  */
+
+  /* Convert dark PNGs to light beige to match the screenshot */
+  filter: brightness(0) saturate(100%)
+          invert(93%) sepia(9%) saturate(258%) hue-rotate(323deg)
+          brightness(96%) contrast(92%);
+  opacity: 0.95;
 }
 
-/* Hover and active/current states */
+/* Hover and active/current states (subtle) */
 .nav-item:hover{
-  background: color-mix(in srgb, var(--on-nav) 12%, transparent);
+  background: color-mix(in srgb, var(--on-nav) 10%, transparent);
 }
 .nav-item[aria-current="page"]{
-  background: color-mix(in srgb, var(--on-nav) 18%, transparent);
+  background: color-mix(in srgb, var(--on-nav) 14%, transparent);
 }
 .nav-item:focus-visible{
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
-.icon{
+/* Generic SVG icon rule (for back icon) */
+.icon, .back-icon{
   width: 24px;
   height: 24px;
   display: block;
