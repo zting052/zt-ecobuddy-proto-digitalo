@@ -98,6 +98,7 @@
   function updateBanner() {
     if (!bannerEl || !window.EcoProgress?.getState) return;
     const state = window.EcoProgress.getState();
+    if (!state) return; // Not logged in or state not loaded yet
     const req = tasksRequired(state.level);
     const pct = Math.min(100, (state.completed / req) * 100);
 

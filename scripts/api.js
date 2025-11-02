@@ -29,6 +29,11 @@ const API = (() => {
     getProgress: () => http("/api/progress"),
     taskCompleted: () => http("/api/progress/task-completed", { method: "POST" }),
 
+    // Google Home pairing (dev mock)
+    googleStatus: () => http("/api/google/status"),
+    googleMockLink: () => http("/api/google/mock-link", { method: "POST" }),
+    googleUnlink: () => http("/api/google/unlink", { method: "POST" }),
+
     // Existing task endpoints (if/when backend is added)
     getTasks: () => http("/api/tasks"),
     turnLightOff: (id) => http(`/api/lights/${encodeURIComponent(id)}/off`, { method: "POST" }),

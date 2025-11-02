@@ -9,6 +9,7 @@ const SQLiteStore = SQLiteStoreFactory(session);
 
 const PORT = process.env.PORT || 8787;
 const SESSION_SECRET = process.env.SESSION_SECRET || "dev-secret-change-me";
+const GOOGLE_HOME_DEV_NAME = "Google Home (dev)";
 
 const app = express();
 
@@ -140,6 +141,23 @@ app.post("/api/progress/task-completed", requireAuth, (req, res) => {
   };
 
   res.json({ ok: true, leveledUp, state });
+});
+
+// Google Home mock endpoints (dev only)
+app.get("/api/google/status", requireAuth, (req, res) => {
+  const linked = req.session.googleLinked || false;
+  const accountName = linked ? GOOGLE_HOME_DEV_NAME : "";
+  res.json({ linked, accountName });
+});
+
+app.post("/api/google/mock-link", requireAuth, (req, res) => {
+  req.session.googleLinked = true;
+  res.json({ ok: true, linked: true, accountName: GOOGLE_HOME_DEV_NAME });
+});
+
+app.post("/api/google/unlink", requireAuth, (req, res) => {
+  req.session.googleLinked = false;
+  res.json({ ok: true, linked: false });
 });
 
 app.listen(PORT, () => {
