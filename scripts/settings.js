@@ -1,49 +1,77 @@
 (function(){
-  const baseURL = (window.API_BASE_URL || "").replace(/\/$/, "");
-  const statusEl = document.getElementById("google-status");
-  const btnAuth = document.getElementById("google-auth-btn");
-  const btnDisconnect = document.getElementById("google-disconnect-btn");
+  const statusEl = document.getElementById("auth-status");
+  const form = document.getElementById("auth-form");
+  const btnLogin = document.getElementById("btn-login");
+  const btnSignup = document.getElementById("btn-signup");
+  const btnLogout = document.getElementById("btn-logout");
+  const fieldUser = document.getElementById("auth-username");
+  const fieldPass = document.getElementById("auth-password");
+  const loggedInWrap = document.getElementById("auth-loggedin");
+  const authName = document.getElementById("auth-name");
 
-  async function http(path, opts={}){
-    const res = await fetch(`${baseURL}${path}`, { credentials: "include", ...opts });
-    if(!res.ok) throw new Error(await res.text().catch(()=>res.statusText));
-    const ct = res.headers.get("content-type");
-    return ct && ct.includes("application/json") ? res.json() : res.text();
-  }
-
-  async function load(){
+  async function refresh() {
     try{
-      const me = await http("/api/me");
-      const connected = !!(me && me.google && me.google.connected);
-      if(connected){
-        statusEl.textContent = `Connected${me.google.email ? ` as ${me.google.email}` : ""}`;
-        btnAuth.style.display = "none";
-        btnDisconnect.style.display = "";
-      }else{
-        statusEl.textContent = "Not connected";
-        btnAuth.style.display = "";
-        btnDisconnect.style.display = "none";
+      const me = await API.me();
+      if (me && me.authenticated) {
+        statusEl.textContent = "Signed in";
+        authName.textContent = me.username || "";
+        form.style.display = "none";
+        loggedInWrap.style.display = "";
+      } else {
+        statusEl.textContent = "Not signed in";
+        form.style.display = "";
+        loggedInWrap.style.display = "none";
       }
-    }catch(e){
-      statusEl.textContent = "Not connected";
-      btnAuth.style.display = "";
-      btnDisconnect.style.display = "none";
+    } catch {
+      statusEl.textContent = "Not signed in";
+      form.style.display = "";
+      loggedInWrap.style.display = "none";
     }
   }
 
-  btnAuth.addEventListener("click", async () => {
-    const returnTo = location.href;
-    location.href = `${baseURL}/auth/google?returnTo=${encodeURIComponent(returnTo)}`;
-  });
-
-  btnDisconnect.addEventListener("click", async () => {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const u = fieldUser.value.trim();
+    const p = fieldPass.value;
+    if (!u || !p) return;
+    btnLogin.disabled = true;
+    btnLogin.textContent = "Logging in…";
     try{
-      await http("/auth/logout", { method: "POST" });
-      await load();
-    }catch(e){
-      alert("Failed to disconnect");
+      await API.login(u, p);
+      await refresh();
+    } catch (e){
+      alert(e.message || "Login failed");
+    } finally {
+      btnLogin.disabled = false;
+      btnLogin.textContent = "Log in";
     }
   });
 
-  document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", load) : load();
+  btnSignup.addEventListener("click", async () => {
+    const u = fieldUser.value.trim();
+    const p = fieldPass.value;
+    if (!u || !p) return alert("Enter a username and password");
+    btnSignup.disabled = true;
+    btnSignup.textContent = "Signing up…";
+    try{
+      await API.signup(u, p);
+      await refresh();
+    } catch (e){
+      alert(e.message || "Sign up failed");
+    } finally {
+      btnSignup.disabled = false;
+      btnSignup.textContent = "Sign up";
+    }
+  });
+
+  btnLogout.addEventListener("click", async () => {
+    try{
+      await API.logout();
+      await refresh();
+    } catch {
+      alert("Failed to log out");
+    }
+  });
+
+  document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", refresh) : refresh();
 })();
