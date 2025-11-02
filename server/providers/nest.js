@@ -37,13 +37,12 @@ export function nestProvider({ projectId = process.env.DEVICE_ACCESS_PROJECT_ID 
       const setpoint = traits["sdm.devices.traits.ThermostatTemperatureSetpoint"];
       const fan = traits["sdm.devices.traits.Fan"];
       const ambientC = temp?.ambientTemperatureCelsius;
-      // Prefer coolCelsius if present, fallback to heatCelsius
       const setpointC = setpoint?.coolCelsius ?? setpoint?.heatCelsius;
       const fanMode = fan?.timerMode || "auto";
 
       if (d.type?.includes("THERMOSTAT") || (ambientC !== undefined || setpointC !== undefined)) {
         out.push({
-          id: d.name,                 // full SDM device resource name
+          id: d.name,
           name: d.parentRelations?.[0]?.displayName || d.assignee || d.name.split("/").pop(),
           ambientC,
           setpointC,
@@ -71,11 +70,9 @@ export function nestProvider({ projectId = process.env.DEVICE_ACCESS_PROJECT_ID 
       });
     },
 
-    // Note: SDM doesn't expose generic "fan speed" the way some systems do.
-    // The available Fan command is SetTimer (turn on fan for a duration), which
-    // isn’t a persistent speed setting. We NOOP fanSpeed to keep UI happy.
+    // SDM fan control is limited; we NOOP fanSpeed to keep UI consistent.
     async maybeSetFan({ /* deviceName, accessToken, fanSpeed */ }) {
-      return true; // No-op; SDM fan control is limited
+      return true;
     }
   };
 }
