@@ -311,3 +311,37 @@ h1, h2{
   display: block;
   margin: 0;
 }
+/* Vertically center the entire nav list inside the 77px nav bar */
+.app-nav { position: relative; }
+
+.app-nav .nav-list{
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  height: auto;            /* let the list size to its contents */
+  padding: 0 12px;         /* keep your horizontal spacing */
+  margin: 0;
+  display: flex;
+  align-items: center;      /* center items within the line */
+  justify-content: space-around;
+  gap: 4px;
+}
+
+/* Make each anchor a consistent, centered tap target */
+.app-nav .nav-list > li{
+  height: auto;
+  display: block;
+}
+
+.app-nav .nav-item{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px !important;  /* ensure it’s not stuck at 44px or 100% */
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}
