@@ -22,18 +22,24 @@
       <main id="content" class="app-content" role="main">
         <section class="card" tabindex="-1">
           <h1>Settings</h1>
-          <p>Adjust your preferences here.</p>
+          <p>Connect services to enable energy‑saving automations.</p>
 
-          <form class="settings-form">
-            <label class="setting-row">
-              <span>Enable notifications</span>
-              <input type="checkbox" />
-            </label>
-            <label class="setting-row">
-              <span>Dark mode</span>
-              <input type="checkbox" />
-            </label>
-          </form>
+          <div class="settings-form">
+            <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:8px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                <strong>Google Home (Nest)</strong>
+                <span id="google-status" style="opacity:.8; font-size:.9rem;">Checking…</span>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button id="google-auth-btn" class="btn">Sign in with Google</button>
+                <button id="google-disconnect-btn" class="btn" style="display:none; background:#6b7280;">Disconnect</button>
+              </div>
+              <small style="opacity:.8;">
+                Thermostat control uses Google’s Smart Device Management API. Lights are not exposed by SDM;
+                use vendor integrations or Home Assistant for lights.
+              </small>
+            </div>
+          </div>
         </section>
       </main>
 
@@ -60,5 +66,12 @@
       </header>
     </div>
   </div>
+
+  <script>
+    // Point to your backend (adjust if you deploy elsewhere)
+    window.API_BASE_URL = window.API_BASE_URL || "http://localhost:8787";
+  </script>
+  <script src="scripts/api.js" defer></script>
+  <script src="scripts/settings.js" defer></script>
 </body>
 </html>
