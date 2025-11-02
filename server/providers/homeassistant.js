@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 /**
- * Home Assistant provider (fastest real-world path).
+ * Home Assistant provider (fastest real-world path for lights).
  * Requires:
  * - HA_BASE_URL (e.g., http://homeassistant.local:8123)
  * - HA_TOKEN (Long-Lived Access Token from your HA profile)
@@ -25,9 +25,8 @@ export function homeAssistantProvider({ baseUrl, token }) {
   function toNumber(x) { const n = Number(x); return Number.isFinite(n) ? n : undefined; }
 
   return {
-    // Return { lights: [...], thermostats: [...] }
     async getDevices() {
-      const states = await ha("/api/states"); // requires token
+      const states = await ha("/api/states");
       const lights = [];
       const thermostats = [];
 
@@ -55,7 +54,6 @@ export function homeAssistantProvider({ baseUrl, token }) {
     },
 
     async turnLightOff(id) {
-      // POST /api/services/light/turn_off { entity_id }
       await ha("/api/services/light/turn_off", {
         method: "POST",
         body: JSON.stringify({ entity_id: id }),
@@ -64,14 +62,12 @@ export function homeAssistantProvider({ baseUrl, token }) {
     },
 
     async adjustThermostat({ id, setpointC, fanSpeed }) {
-      // Set temperature if provided
       if (typeof setpointC === "number") {
         await ha("/api/services/climate/set_temperature", {
           method: "POST",
           body: JSON.stringify({ entity_id: id, temperature: setpointC }),
         });
       }
-      // Set fan mode if provided (device must support it)
       if (fanSpeed) {
         await ha("/api/services/climate/set_fan_mode", {
           method: "POST",
