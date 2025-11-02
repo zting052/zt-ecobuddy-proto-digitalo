@@ -1,7 +1,6 @@
 // Simple API client to your backend.
-// Swap baseURL if you host the backend elsewhere.
 const API = (() => {
-  const baseURL = (window.API_BASE_URL || "").replace(/\/$/, "");
+  const baseURL = (window.API_BASE_URL || "http://localhost:8787").replace(/\/$/, "");
 
   async function http(path, options = {}) {
     const res = await fetch(`${baseURL}${path}`, {
@@ -18,7 +17,7 @@ const API = (() => {
   }
 
   return {
-    // Get a normalized device list and derived tasks
+    // Get derived energy-saving tasks
     getTasks: () => http("/api/tasks"),
 
     // Device actions
