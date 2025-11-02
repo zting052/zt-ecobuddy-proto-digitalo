@@ -1,16 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap");
 
+/* Theme tokens */
 :root{
   --surround: #D4D4D4; /* page background behind the app container */
   --bg: #FFFFFF;       /* app interior background */
   --nav: #322018;      /* navigation bar color */
   --on-nav: #FFFFFF;   /* used for hover/focus accents */
-  --icon-tint: #E7DDD6;/* light beige like your screenshot */
   --card: #FFFFFF;
   --text: #111827;
   --focus: #111827;
 }
 
+/* Base reset */
 *,
 *::before,
 *::after { box-sizing: border-box; }
@@ -111,6 +112,7 @@ body{
   padding-top: 64px;            /* space for button + breathing room */
 }
 
+/* Cards and settings form */
 .card{
   background: var(--card);
   color: var(--text);
@@ -142,7 +144,7 @@ h1, h2{
   line-height: 1.2;
 }
 
-/* Nav pinned to bottom of the fixed app area */
+/* Bottom navigation (pinned, rounded, vertically centered icons) */
 .app-nav{
   position: absolute;
   left: 0;
@@ -156,53 +158,53 @@ h1, h2{
   overflow: hidden;             /* clip children to rounded corners */
 }
 
-/* Center icons vertically by stretching li to full height and
-   centering the anchor within each li */
-.nav-list{
+/* Vertically center the entire nav list inside the 77px bar */
+.app-nav .nav-list{
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
   margin: 0;
-  height: 100%;
-  padding: 0 8px;
+  padding: 0 12px;
   list-style: none;
   display: flex;
-  align-items: stretch;         /* stretch li to full bar height */
+  align-items: center;
   justify-content: space-around;
   gap: 4px;
 }
-.nav-list > li{
-  height: 100%;
-  display: flex;                /* create a centering context for the anchor */
-  align-items: center;          /* center anchor vertically */
+
+/* Each anchor is a centered tap target */
+.app-nav .nav-list > li{
+  display: block;
 }
 
 .nav-item{
   display: inline-flex;
-  align-items: center;          /* center icon vertically */
+  align-items: center;
   justify-content: center;
   width: 56px;                  /* >= 44x44 tap target */
-  height: 100%;                 /* fill the li (and thus the bar) */
-  min-height: 44px;
+  height: 56px;                 /* centered within 77px bar */
   color: inherit;
   text-decoration: none;
   border-radius: 10px;
   outline: none;
-  margin: 0;                    /* avoid accidental vertical offsets */
 }
 
-/* Image icons in nav: tint to light beige and slightly soften */
+/* Image icons in nav: tint to light beige (from your screenshot) */
 .nav-icon{
   width: 26px;
   height: 26px;
   display: block;
   object-fit: contain;
-
-  /* Convert dark PNGs to light beige to match the screenshot */
+  /* Convert dark PNGs to light beige; remove this if your PNGs are already light */
   filter: brightness(0) saturate(100%)
           invert(93%) sepia(9%) saturate(258%) hue-rotate(323deg)
           brightness(96%) contrast(92%);
   opacity: 0.95;
 }
 
-/* Hover and active/current states (subtle) */
+/* Hover, current, focus states */
 .nav-item:hover{
   background: color-mix(in srgb, var(--on-nav) 10%, transparent);
 }
@@ -212,13 +214,6 @@ h1, h2{
 .nav-item:focus-visible{
   outline: 2px solid var(--focus);
   outline-offset: 2px;
-}
-
-/* Generic SVG icon rule (for back icon) */
-.icon, .back-icon{
-  width: 24px;
-  height: 24px;
-  display: block;
 }
 
 /* Skip link for accessibility */
@@ -242,128 +237,11 @@ h1, h2{
   z-index: 2000;
 }
 
+/* Motion reduction */
 @media (prefers-reduced-motion: reduce){
   * {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
   }
-}
-/* Force true vertical centering in the 77px nav bar */
-.app-nav .nav-list{
-  align-items: stretch; /* make li fill the bar height */
-}
-
-.app-nav .nav-list > li{
-  height: 100%;
-  display: flex;
-  align-items: center;  /* center the anchor vertically */
-}
-
-.app-nav .nav-item{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100% !important;  /* override any earlier fixed height (e.g., 44px) */
-  min-height: 0;            /* ensure no min-height interferes */
-  padding: 0;
-  margin: 0;
-}
-
-.app-nav .nav-icon{
-  display: block;
-  width: 26px;
-  height: 26px;
-  margin: 0;                /* remove any stray vertical margins */
-}
-/* Force vertical centering of nav icons inside the 77px bar */
-.app-shell .app-nav { height: 77px; }
-
-.app-shell .app-nav nav .nav-list{
-  height: 100%;
-  padding-top: 0;              /* ensure no top padding */
-  padding-bottom: 0;
-  align-items: stretch;        /* stretch li to bar height */
-}
-
-.app-shell .app-nav nav .nav-list > li{
-  height: 100%;
-  display: flex;
-  align-items: center;         /* center the anchor vertically */
-}
-
-.app-shell .app-nav nav .nav-list > li > a.nav-item{
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 100% !important;     /* override earlier 44px */
-  min-height: 0 !important;    /* neutralize any min-height */
-  line-height: 0;              /* remove baseline effects */
-  padding: 0;
-  margin: 0;
-  border-radius: 10px;         /* keep your hover shape if desired */
-}
-
-/* Icon sizing/tint only; no vertical margins that can offset centering */
-.app-shell .app-nav .nav-icon{
-  width: 26px;
-  height: 26px;
-  display: block;
-  margin: 0;
-}
-/* Vertically center the entire nav list inside the 77px nav bar */
-.app-nav { position: relative; }
-
-.app-nav .nav-list{
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-  height: auto;            /* let the list size to its contents */
-  padding: 0 12px;         /* keep your horizontal spacing */
-  margin: 0;
-  display: flex;
-  align-items: center;      /* center items within the line */
-  justify-content: space-around;
-  gap: 4px;
-}
-
-/* Make each anchor a consistent, centered tap target */
-.app-nav .nav-list > li{
-  height: auto;
-  display: block;
-}
-
-.app-nav .nav-item{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px !important;  /* ensure it’s not stuck at 44px or 100% */
-  min-height: 0;
-  padding: 0;
-  margin: 0;
-}
-/* Pin nav bar to bottom of the 320×568 container (and keep 77px height) */
-.app-nav{
-  position: absolute !important;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 77px;
-}
-
-/* Keep the list vertically centered within the bar */
-.app-nav .nav-list{
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-}
-
-/* Ensure content leaves room for the 77px bar */
-.app-content{
-  inset: 0 0 77px 0;
 }
