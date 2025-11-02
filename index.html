@@ -64,7 +64,12 @@
     </div>
   </div>
 
+  <script>
+    // Point the frontend to your backend. Defaults to localhost for dev.
+    window.API_BASE_URL = window.API_BASE_URL || "http://localhost:8787";
+  </script>
   <!-- Garden + Progress scripts -->
+  <script src="scripts/api.js" defer></script>
   <script src="scripts/progress.js" defer></script>
   <script src="scripts/garden.js" defer></script>
 </body>
