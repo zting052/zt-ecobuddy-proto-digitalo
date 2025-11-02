@@ -4,7 +4,7 @@
   --surround: #D4D4D4; /* page background behind the app container */
   --bg: #FFFFFF;       /* app interior background */
   --nav: #322018;      /* navigation bar color */
-  --on-nav: #FFFFFF;   /* icon color on nav */
+  --on-nav: #FFFFFF;   /* icon color on nav (used for hover focus accents) */
   --card: #FFFFFF;
   --text: #111827;
   --focus: #111827;
@@ -172,6 +172,18 @@ h1, h2{
   text-decoration: none;
   border-radius: 10px;
   outline: none;
+}
+
+/* Image icons in nav */
+.nav-icon{
+  width: 24px;
+  height: 24px;
+  display: block;
+  object-fit: contain;
+  /* If your icons are dark and hard to see on the dark nav,
+     you can uncomment the next line to turn them white:
+     filter: invert(1) brightness(2);
+  */
 }
 
 /* Hover and active/current states */
