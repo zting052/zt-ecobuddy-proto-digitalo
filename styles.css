@@ -1,11 +1,11 @@
 :root{
-  --surround: #D4D4D4; /* background behind the app container */
+  --surround: #D4D4D4; /* page background behind the app container */
   --bg: #FFFFFF;       /* app interior background */
   --nav: #322018;      /* navigation bar color */
   --on-nav: #FFFFFF;   /* icon color on nav */
   --card: #FFFFFF;
   --text: #111827;
-  --focus: #FFFFFF;
+  --focus: #111827;
 }
 
 *,
@@ -16,15 +16,15 @@ html, body { height: 100%; }
 
 body{
   margin: 0;
-  background: var(--surround); /* distinguish from nav color */
+  background: var(--surround);
   color: var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   display: grid;
-  place-items: center;          /* center the app on the page */
-  min-height: 100dvh;           /* avoid page scrollbars; app itself can scroll */
+  place-items: center;
+  min-height: 100dvh;
 }
 
 /* Centers the fixed-size app */
@@ -48,14 +48,47 @@ body{
     0 2px 8px rgba(0,0,0,0.2);
 }
 
+/* Settings button (present on all pages except settings) */
+.settings-button{
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 40px;                  /* >= 44px tap target with padding */
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  text-decoration: none;
+  z-index: 5;                   /* above content */
+  outline: none;
+}
+.settings-button img{
+  max-width: 24px;
+  max-height: 24px;
+  display: block;
+}
+.settings-button:hover{
+  background: rgba(0,0,0,0.06);
+}
+.settings-button:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
 /* Scrollable content area inside the fixed shell.
    Reserve space at the bottom for the nav bar (its height). */
 .app-content{
   position: absolute;
-  inset: 0 0 64px 0;            /* top, right, bottom, left; bottom = nav height */
+  inset: 0 0 64px 0;            /* bottom = nav height */
   padding: 12px;
   overflow: auto;               /* scrolls within the app, not the page */
   -webkit-overflow-scrolling: touch;
+}
+
+/* When the settings button is present, add extra top padding
+   so content doesn't hide behind the button */
+.app-shell.has-settings-button .app-content{
+  padding-top: 56px;            /* 12px + 40px button + margin */
 }
 
 .card{
@@ -68,6 +101,20 @@ body{
   max-width: 100%;
   margin: 10px 0;
   padding: 14px 16px;
+}
+
+.settings-form{
+  display: grid;
+  gap: 10px;
+}
+.setting-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
 }
 
 h1, h2{
