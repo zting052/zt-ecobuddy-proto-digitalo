@@ -150,6 +150,9 @@ h1, h2{
   height: 64px;                 /* keep in sync with .app-content bottom inset */
   background: var(--nav);
   color: var(--on-nav);
+  border-top-left-radius: 35px;  /* rounded top corners */
+  border-top-right-radius: 35px; /* rounded top corners */
+  overflow: hidden;              /* clip children to rounded corners */
 }
 
 .nav-list{
