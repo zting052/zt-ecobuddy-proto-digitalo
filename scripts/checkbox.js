@@ -181,6 +181,6 @@
     }
   }
 
-  document.readyState === "loading" ? 
+  document.readyState === "loading" ?
     document.addEventListener("DOMContentLoaded", load) : load();
 })();
