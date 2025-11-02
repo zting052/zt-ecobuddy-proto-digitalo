@@ -249,3 +249,30 @@ h1, h2{
     scroll-behavior: auto !important;
   }
 }
+/* Force true vertical centering in the 77px nav bar */
+.app-nav .nav-list{
+  align-items: stretch; /* make li fill the bar height */
+}
+
+.app-nav .nav-list > li{
+  height: 100%;
+  display: flex;
+  align-items: center;  /* center the anchor vertically */
+}
+
+.app-nav .nav-item{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100% !important;  /* override any earlier fixed height (e.g., 44px) */
+  min-height: 0;            /* ensure no min-height interferes */
+  padding: 0;
+  margin: 0;
+}
+
+.app-nav .nav-icon{
+  display: block;
+  width: 26px;
+  height: 26px;
+  margin: 0;                /* remove any stray vertical margins */
+}
