@@ -1,8 +1,112 @@
 (function () {
   const tasksEl = document.getElementById("tasks");
   const emptyEl = document.getElementById("tasks-empty");
+  const bannerEl = document.getElementById("tasks-level-banner");
 
-  function renderEmpty(show) { emptyEl.hidden = !show; }
+  function injectBannerStyles() {
+    const style = document.createElement("style");
+    style.textContent = `
+      /* Shared Level banner look (same as on Home) */
+      .level-banner{
+        margin: 0 0 10px 0;
+      }
+      .level-banner .level-title{
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+      .level-banner .unlock-title{
+        margin-top: 2px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        opacity: 0.9;
+      }
+      .level-banner .level-progress{
+        margin-top: 6px;
+        height: 10px;
+        border-radius: 999px;
+        background: #E5E7EB;
+        overflow: hidden;
+      }
+      .level-banner .level-progress > span{
+        display:block;
+        height: 100%;
+        width: 0%;
+        background: #234e33;
+        border-radius: 999px;
+        transition: width 220ms ease;
+      }
+
+      /* Task list visuals */
+      #tasks { display: grid; gap: 10px; }
+      .task-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 10px;
+        background: #fff;
+      }
+      .task-title { font-weight: 600; }
+      .task-details { opacity: 0.8; font-size: 0.9rem; }
+      .btn {
+        appearance: none;
+        border: 0;
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: #322018;
+        color: #fff;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .btn:disabled { opacity: 0.6; cursor: default; }
+      .thermo-controls {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        margin-top: 8px;
+        align-items: center;
+      }
+      .thermo-controls label {
+        display: grid;
+        gap: 6px;
+        font-size: 0.9rem;
+      }
+      .thermo-controls input[type=\"range\"] { width: 100%; }
+      .thermo-controls output { min-width: 3ch; display: inline-block; text-align: right; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function tasksRequired(level) {
+    return 5 + (Math.max(1, level) - 1) * 2; // 5,7,9,11,13...
+  }
+
+  function newPlantLabel(level) {
+    switch (Math.max(1, Math.min(5, level))) {
+      case 1: return "Potatoes";
+      case 2: return "Bushes";
+      case 3: return "Sunflowers";
+      case 4: return "Dandelions";
+      case 5: return "Roses";
+      default: return "New plants";
+    }
+  }
+
+  function updateBanner() {
+    if (!bannerEl || !window.EcoProgress?.getState) return;
+    const state = window.EcoProgress.getState();
+    const req = tasksRequired(state.level);
+    const pct = Math.min(100, (state.completed / req) * 100);
+
+    bannerEl.querySelector(".level-title").textContent = `Level ${state.level}`;
+    bannerEl.querySelector(".unlock-title").textContent = newPlantLabel(state.level);
+    bannerEl.querySelector(".level-progress > span").style.width = `${pct}%`;
+  }
+
+  function renderEmpty(show) { if (emptyEl) emptyEl.hidden = !show; }
 
   function afterSuccess() {
     // Count toward levelling system
@@ -111,53 +215,7 @@
     tasksEl.appendChild(row);
   }
 
-  function injectStyles() {
-    const style = document.createElement("style");
-    style.textContent = `
-      #tasks { display: grid; gap: 10px; }
-      .task-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        border: 1px solid rgba(0,0,0,0.08);
-        border-radius: 10px;
-        background: #fff;
-      }
-      .task-title { font-weight: 600; }
-      .task-details { opacity: 0.8; font-size: 0.9rem; }
-      .btn {
-        appearance: none;
-        border: 0;
-        border-radius: 10px;
-        padding: 8px 12px;
-        background: #322018;
-        color: #fff;
-        font-family: inherit;
-        cursor: pointer;
-      }
-      .btn:disabled { opacity: 0.6; cursor: default; }
-      .thermo-controls {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 12px;
-        margin-top: 8px;
-        align-items: center;
-      }
-      .thermo-controls label {
-        display: grid;
-        gap: 6px;
-        font-size: 0.9rem;
-      }
-      .thermo-controls input[type="range"] { width: 100%; }
-      .thermo-controls output { min-width: 3ch; display: inline-block; text-align: right; }
-    `;
-    document.head.appendChild(style);
-  }
-
-  async function load() {
-    injectStyles();
+  async function loadTasks() {
     if (!tasksEl) return;
     tasksEl.textContent = "Loading…";
     try {
@@ -191,6 +249,17 @@
     }
   }
 
+  function setup() {
+    injectBannerStyles();
+    updateBanner();
+    loadTasks();
+
+    // Update banner when progress changes
+    window.addEventListener("eco:progress", updateBanner);
+    window.addEventListener("eco:newPlant", updateBanner);
+    window.addEventListener("eco:levelUp", updateBanner);
+  }
+
   document.readyState === "loading" ? 
-    document.addEventListener("DOMContentLoaded", load) : load();
+    document.addEventListener("DOMContentLoaded", setup) : setup();
 })();
