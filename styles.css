@@ -276,3 +276,38 @@ h1, h2{
   height: 26px;
   margin: 0;                /* remove any stray vertical margins */
 }
+/* Force vertical centering of nav icons inside the 77px bar */
+.app-shell .app-nav { height: 77px; }
+
+.app-shell .app-nav nav .nav-list{
+  height: 100%;
+  padding-top: 0;              /* ensure no top padding */
+  padding-bottom: 0;
+  align-items: stretch;        /* stretch li to bar height */
+}
+
+.app-shell .app-nav nav .nav-list > li{
+  height: 100%;
+  display: flex;
+  align-items: center;         /* center the anchor vertically */
+}
+
+.app-shell .app-nav nav .nav-list > li > a.nav-item{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;     /* override earlier 44px */
+  min-height: 0 !important;    /* neutralize any min-height */
+  line-height: 0;              /* remove baseline effects */
+  padding: 0;
+  margin: 0;
+  border-radius: 10px;         /* keep your hover shape if desired */
+}
+
+/* Icon sizing/tint only; no vertical margins that can offset centering */
+.app-shell .app-nav .nav-icon{
+  width: 26px;
+  height: 26px;
+  display: block;
+  margin: 0;
+}
