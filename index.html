@@ -17,8 +17,25 @@
 
       <main id="content" class="app-content" role="main">
         <section class="card" tabindex="-1">
-          <h1>Home</h1>
-          <p>This app is fixed at 320×568px, centered on a #D4D4D4 page background. The navbar is pinned to the bottom inside the app and is #322018.</p>
+          <h1>Welcome back</h1>
+          <p>Complete tasks to grow your eco‑garden and level up!</p>
+        </section>
+
+        <section class="card" id="garden-card">
+          <h2>Garden</h2>
+          <div id="garden" aria-label="Your garden" role="img"></div>
+          <div class="garden-meta">
+            <span class="level-label">Level 1</span>
+            <div style="flex:1; margin: 0 8px;">
+              <div class="garden-progress"><span style="width:0%"></span></div>
+            </div>
+            <span class="count-label">0/5</span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>How to grow</h2>
+          <p>Finish energy‑saving tasks in the Checkbox tab. Each completion adds a plant. Reach the goal to level up and see new flora!</p>
         </section>
       </main>
 
@@ -45,5 +62,9 @@
       </header>
     </div>
   </div>
+
+  <!-- Garden + Progress scripts -->
+  <script src="scripts/progress.js" defer></script>
+  <script src="scripts/garden.js" defer></script>
 </body>
 </html>
