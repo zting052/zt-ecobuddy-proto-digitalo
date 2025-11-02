@@ -1,1 +1,1 @@
-# zt-ecobuddy-proto-digitalo
+# Zach's EcoBuddy Prototype Hosted on DigitalOcean
