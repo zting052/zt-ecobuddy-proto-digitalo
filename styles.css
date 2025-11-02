@@ -161,16 +161,17 @@ h1, h2{
   padding: 0 8px;
   list-style: none;
   display: flex;
-  align-items: center;
-  justify-content: space-around;
+  align-items: center;           /* vertically center items */
+  justify-content: space-around; /* keep horizontal spacing */
   gap: 4px;
 }
 
 .nav-item{
   display: grid;
-  place-items: center;
-  width: 56px;                  /* ensures tap target >= 44x44 */
-  height: 44px;
+  place-items: center;           /* center icon inside each item */
+  width: 56px;                   /* ensures tap target >= 44x44 */
+  height: 100%;                  /* fill nav height to ensure vertical centering */
+  min-height: 44px;
   color: inherit;
   text-decoration: none;
   border-radius: 10px;
