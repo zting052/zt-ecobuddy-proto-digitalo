@@ -1,4 +1,4 @@
-// Simple API client to your backend.
+// Extend existing API client with auth and progress endpoints.
 const API = (() => {
   const baseURL = (window.API_BASE_URL || "http://localhost:8787").replace(/\/$/, "");
 
@@ -13,17 +13,25 @@ const API = (() => {
       try { const j = await res.json(); msg = j.error || msg; } catch {}
       throw new Error(msg);
     }
-    return res.json();
+    // try json, else text, else null
+    const ct = res.headers.get("content-type") || "";
+    return ct.includes("application/json") ? res.json() : res.text();
   }
 
   return {
-    // Get derived energy-saving tasks
+    // Auth
+    me: () => http("/api/me"),
+    login: (username, password) => http("/api/auth/login", { method: "POST", body: JSON.stringify({ username, password }) }),
+    signup: (username, password) => http("/api/auth/signup", { method: "POST", body: JSON.stringify({ username, password }) }),
+    logout: () => http("/api/auth/logout", { method: "POST" }),
+
+    // Progress (server-backed)
+    getProgress: () => http("/api/progress"),
+    taskCompleted: () => http("/api/progress/task-completed", { method: "POST" }),
+
+    // Existing task endpoints (if/when backend is added)
     getTasks: () => http("/api/tasks"),
-
-    // Device actions
-    turnLightOff: (id) =>
-      http(`/api/lights/${encodeURIComponent(id)}/off`, { method: "POST" }),
-
+    turnLightOff: (id) => http(`/api/lights/${encodeURIComponent(id)}/off`, { method: "POST" }),
     adjustThermostat: ({ id, setpointC, fanSpeed }) =>
       http(`/api/thermostats/${encodeURIComponent(id)}/adjust`, {
         method: "POST",
