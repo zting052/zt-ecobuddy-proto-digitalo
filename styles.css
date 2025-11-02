@@ -48,29 +48,46 @@ body{
     0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* Settings button (present on all pages except settings) */
-.settings-button{
+/* Top-left buttons (Settings or Back) */
+.settings-button,
+.back-button{
   position: absolute;
   top: 8px;
   left: 8px;
-  width: 40px;                  /* >= 44px tap target with padding */
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
+  width: 44px;                  /* >= 44px tap target */
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.92); /* subtle pill for visibility */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   text-decoration: none;
-  z-index: 5;                   /* above content */
+  z-index: 1000;                /* above content */
   outline: none;
+  cursor: pointer;
 }
 .settings-button img{
-  max-width: 24px;
-  max-height: 24px;
+  width: 24px;
+  height: 24px;
   display: block;
 }
-.settings-button:hover{
-  background: rgba(0,0,0,0.06);
+.back-button .back-icon{
+  width: 24px;
+  height: 24px;
+  display: block;
+  color: #000;
 }
-.settings-button:focus-visible{
+.settings-button:hover,
+.back-button:hover{
+  background: rgba(255,255,255,1);
+}
+.settings-button:active,
+.back-button:active{
+  transform: translateY(0.5px);
+}
+.settings-button:focus-visible,
+.back-button:focus-visible{
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -85,10 +102,10 @@ body{
   -webkit-overflow-scrolling: touch;
 }
 
-/* When the settings button is present, add extra top padding
-   so content doesn't hide behind the button */
+/* When a top-left button is present, add extra top padding so content doesn't
+   hide behind the button */
 .app-shell.has-settings-button .app-content{
-  padding-top: 56px;            /* 12px + 40px button + margin */
+  padding-top: 64px;            /* space for button + breathing room */
 }
 
 .card{
@@ -191,7 +208,7 @@ h1, h2{
   background: #000;
   color: #fff;
   border-radius: 6px;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 @media (prefers-reduced-motion: reduce){
