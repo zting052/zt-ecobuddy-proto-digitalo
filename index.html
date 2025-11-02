@@ -9,53 +9,57 @@
 <body>
   <a class="skip-link" href="#home">Skip to content</a>
 
-  <header class="app-nav" role="banner">
-    <nav aria-label="Primary">
-      <ul class="nav-list" role="list">
-        <li>
-          <a href="#home" class="nav-item" aria-label="Home" title="Home">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-          </a>
-        </li>
-        <li>
-          <a href="#checkbox" class="nav-item" aria-label="Checkbox" title="Checkbox">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <rect x="3" y="3" width="18" height="18" rx="3" ry="3" fill="none" stroke="currentColor" stroke-width="2"/>
-              <path d="M7 12l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-        </li>
-        <li>
-          <a href="#socials" class="nav-item" aria-label="Socials" title="Socials">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="18" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="18" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
-              <path d="M8.5 10.5 15.5 7.5M8.5 13.5 15.5 16.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </header>
+  <div class="stage">
+    <div class="app-shell" role="application" aria-label="App">
+      <main class="app-content" role="main">
+        <section id="home" class="card" tabindex="-1">
+          <h1>Home</h1>
+          <p>This app area is fixed at 320×568px. The surrounding background is #322018, and the navbar sits at the bottom inside the app.</p>
+        </section>
 
-  <main class="app-content">
-    <section id="home" class="card" tabindex="-1">
-      <h1>Home</h1>
-      <p>This is a simple, responsive scaffold. The page background is #D4D4D4 and the navigation bar is #322018.</p>
-    </section>
+        <section id="checkbox" class="card" tabindex="-1">
+          <h2>Checkbox</h2>
+          <p>Use this section for your checklist features. You can expand this later with interactive components.</p>
+        </section>
 
-    <section id="checkbox" class="card" tabindex="-1">
-      <h2>Checkbox</h2>
-      <p>Use this section for your checklist features. You can expand this later with interactive components.</p>
-    </section>
+        <section id="socials" class="card" tabindex="-1">
+          <h2>Socials</h2>
+          <p>Place your social links or widgets here.</p>
+        </section>
+      </main>
 
-    <section id="socials" class="card" tabindex="-1">
-      <h2>Socials</h2>
-      <p>Place your social links or widgets here.</p>
-    </section>
-  </main>
+      <header class="app-nav" role="banner">
+        <nav aria-label="Primary">
+          <ul class="nav-list" role="list">
+            <li>
+              <a href="#home" class="nav-item" aria-label="Home" title="Home">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+              </a>
+            </li>
+            <li>
+              <a href="#checkbox" class="nav-item" aria-label="Checkbox" title="Checkbox">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect x="3" y="3" width="18" height="18" rx="3" ry="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M7 12l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </li>
+            <li>
+              <a href="#socials" class="nav-item" aria-label="Socials" title="Socials">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="18" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="18" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M8.5 10.5 15.5 7.5M8.5 13.5 15.5 16.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+    </div>
+  </div>
 </body>
 </html>
