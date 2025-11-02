@@ -1,5 +1,5 @@
 // EcoBuddy Garden Renderer for the Home page
-// Renders a dirt plot and plants based on EcoProgress state.
+// Renders a dirt plot and plants based on EcoProgress state, and updates the level banner.
 
 (function () {
   function injectStyles() {
@@ -16,36 +16,44 @@
         box-shadow: inset 0 4px 8px rgba(0,0,0,0.25);
         border: 1px solid rgba(0,0,0,0.2);
       }
-      .garden-meta {
-        margin-top: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 0.9rem;
+
+      /* Level banner (shared look with tasks page) */
+      .level-banner{
+        margin: 4px 0 10px 0;
+      }
+      .level-banner .level-title{
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+      .level-banner .unlock-title{
+        margin-top: 2px;
+        font-weight: 700;
+        font-size: 0.95rem;
         opacity: 0.9;
       }
-      .garden-progress {
-        height: 8px;
-        border-radius: 6px;
-        background: rgba(0,0,0,0.12);
+      .level-banner .level-progress{
+        margin-top: 6px;
+        height: 10px;
+        border-radius: 999px;
+        background: #E5E7EB; /* light grey track */
         overflow: hidden;
       }
-      .garden-progress > span {
-        display: block;
+      .level-banner .level-progress > span{
+        display:block;
         height: 100%;
         width: 0%;
-        background: #2a7c4a; /* green */
-        transition: width 200ms ease;
+        background: #234e33; /* deep green fill */
+        border-radius: 999px;
+        transition: width 220ms ease;
       }
 
-      /* Plant base */
+      /* Plant visuals */
       .plant {
         position: absolute;
         transform: translate(-50%, -50%);
         filter: drop-shadow(0 1px 1px rgba(0,0,0,0.4));
       }
-
-      /* Potato: small mound + sprout */
       .plant.potato .mound {
         width: 26px; height: 16px; border-radius: 20px;
         background: #a0774a;
@@ -56,8 +64,6 @@
         border-bottom: 10px solid #2e7d32; margin: -6px auto 0;
         filter: drop-shadow(0 1px 0 rgba(0,0,0,0.2));
       }
-
-      /* Berry bush */
       .plant.berry .bush {
         width: 28px; height: 22px; border-radius: 14px;
         background: #2e7d32; position: relative;
@@ -68,19 +74,14 @@
       }
       .plant.berry .bush:after { top: 4px; left: 6px; }
       .plant.berry .bush:before { top: 8px; right: 6px; }
-
-      /* Sunflower */
       .plant.sunflower .stem {
         width: 3px; height: 24px; background: #2e7d32; margin: 0 auto;
       }
       .plant.sunflower .head {
         width: 18px; height: 18px; border-radius: 50%;
         background: radial-gradient(#5a3b16 0 35%, #f3c21b 36% 100%);
-        margin: -2px auto 0;
-        border: 2px solid #e6a90a;
+        margin: -2px auto 0; border: 2px solid #e6a90a;
       }
-
-      /* Dandelion */
       .plant.dandelion .stem {
         width: 2px; height: 18px; background: #2e7d32; margin: 0 auto;
       }
@@ -89,8 +90,6 @@
         background: radial-gradient(#fff3 0 45%, #ffd54f 46% 100%);
         border: 1px solid #ffd54f; margin: -2px auto 0;
       }
-
-      /* Rose */
       .plant.rose .stem {
         width: 3px; height: 20px; background: #2e7d32; margin: 0 auto; position: relative;
       }
@@ -143,7 +142,6 @@
       root.appendChild(el("div", "stem"));
       root.appendChild(el("div", "bloom"));
     } else {
-      // Fallback to a simple green dot
       const dot = el("div");
       dot.style.width = dot.style.height = "8px";
       dot.style.background = "#2e7d32";
@@ -153,7 +151,40 @@
     return root;
   }
 
-  function render(container) {
+  function newPlantLabel(level) {
+    // What becomes available at this level
+    switch (Math.max(1, Math.min(5, level))) {
+      case 1: return "Potatoes";
+      case 2: return "Bushes";
+      case 3: return "Sunflowers";
+      case 4: return "Dandelions";
+      case 5: return "Roses";
+      default: return "New plants";
+    }
+  }
+
+  function tasksRequired(level) {
+    return 5 + (Math.max(1, level) - 1) * 2; // 5,7,9,11,13...
+  }
+
+  function renderLevelBanner(container) {
+    const state = window.EcoProgress?.getState ? window.EcoProgress.getState() : { level: 1, completed: 0 };
+    const req = tasksRequired(state.level);
+    const pct = Math.min(100, (state.completed / req) * 100);
+
+    const wrap = document.getElementById("home-level-banner") || container.querySelector(".level-banner");
+    if (!wrap) return;
+
+    const title = wrap.querySelector(".level-title");
+    const unlock = wrap.querySelector(".unlock-title");
+    const bar = wrap.querySelector(".level-progress > span");
+
+    if (title) title.textContent = `Level ${state.level}`;
+    if (unlock) unlock.textContent = newPlantLabel(state.level);
+    if (bar) bar.style.width = `${pct}%`;
+  }
+
+  function renderGarden(container) {
     const state = window.EcoProgress?.getState ? window.EcoProgress.getState() : { level: 1, completed: 0, plants: [] };
     container.innerHTML = "";
 
@@ -161,18 +192,8 @@
     const badge = el("div", "levelup-badge", `Level ${state.level}!`);
     container.appendChild(badge);
 
-    for (const p of state.plants) {
+    for (const p of state.plants || []) {
       container.appendChild(plantElement(p));
-    }
-
-    // Meta row under the plot
-    const meta = document.querySelector(".garden-meta");
-    if (meta) {
-      const req = window.EcoProgress?.tasksRequired ? window.EcoProgress.tasksRequired(state.level) : 5;
-      meta.querySelector(".level-label").textContent = `Level ${state.level}`;
-      meta.querySelector(".count-label").textContent = `${state.completed}/${req}`;
-      const bar = meta.querySelector(".garden-progress > span");
-      bar.style.width = `${Math.min(100, (state.completed / req) * 100)}%`;
     }
   }
 
@@ -190,34 +211,24 @@
     if (!plot) return;
 
     // Initial render
-    render(plot);
+    renderLevelBanner(plot.parentElement);
+    renderGarden(plot);
 
-    // Listen for progress updates
-    window.addEventListener("eco:newPlant", () => render(plot));
-    window.addEventListener("eco:progress", () => render(plot));
+    // Progress updates
+    window.addEventListener("eco:newPlant", () => {
+      renderLevelBanner(plot.parentElement);
+      renderGarden(plot);
+    });
+    window.addEventListener("eco:progress", () => {
+      renderLevelBanner(plot.parentElement);
+      renderGarden(plot);
+    });
     window.addEventListener("eco:levelUp", (e) => {
-      render(plot);
+      renderLevelBanner(plot.parentElement);
+      renderGarden(plot);
       const level = e.detail?.state?.level ?? "";
       showLevelUp(plot, level);
     });
-
-    // Long-press level label to reset (debug)
-    const levelLabel = document.querySelector(".garden-meta .level-label");
-    if (levelLabel) {
-      let pressTimer;
-      levelLabel.addEventListener("mousedown", () => {
-        pressTimer = setTimeout(() => {
-          window.EcoProgress?.resetAll?.();
-        }, 1200);
-      });
-      ["mouseup", "mouseleave"].forEach(ev => levelLabel.addEventListener(ev, () => clearTimeout(pressTimer)));
-      levelLabel.addEventListener("touchstart", () => {
-        pressTimer = setTimeout(() => {
-          window.EcoProgress?.resetAll?.();
-        }, 1200);
-      }, { passive: true });
-      ["touchend", "touchcancel"].forEach(ev => levelLabel.addEventListener(ev, () => clearTimeout(pressTimer)));
-    }
   }
 
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", setup) : setup();
