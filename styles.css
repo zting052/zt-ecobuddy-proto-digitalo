@@ -98,7 +98,7 @@ body{
    Reserve space at the bottom for the nav bar (its height). */
 .app-content{
   position: absolute;
-  inset: 0 0 64px 0;            /* bottom = nav height */
+  inset: 0 0 77px 0;            /* bottom = nav height (77px) */
   padding: 12px;
   overflow: auto;               /* scrolls within the app, not the page */
   -webkit-overflow-scrolling: touch;
@@ -147,7 +147,7 @@ h1, h2{
   left: 0;
   right: 0;
   bottom: 0;
-  height: 64px;                 /* keep in sync with .app-content bottom inset */
+  height: 77px;                 /* increased to 77px */
   background: var(--nav);
   color: var(--on-nav);
   border-top-left-radius: 35px;  /* rounded top corners */
