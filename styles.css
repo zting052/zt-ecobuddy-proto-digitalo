@@ -1,8 +1,8 @@
 :root{
-  --surround: #322018; /* background behind the app content space */
-  --bg: #D4D4D4;       /* app interior background */
-  --nav: #322018;      /* navigation bar */
-  --on-nav: #FFFFFF;
+  --surround: #D4D4D4; /* background behind the app container */
+  --bg: #FFFFFF;       /* app interior background */
+  --nav: #322018;      /* navigation bar color */
+  --on-nav: #FFFFFF;   /* icon color on nav */
   --card: #FFFFFF;
   --text: #111827;
   --focus: #FFFFFF;
@@ -16,15 +16,15 @@ html, body { height: 100%; }
 
 body{
   margin: 0;
-  background: var(--surround);
+  background: var(--surround); /* distinguish from nav color */
   color: var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   display: grid;
-  place-items: center;          /* centers the app on the page */
-  min-height: 100dvh;           /* avoid page scrollbars */
+  place-items: center;          /* center the app on the page */
+  min-height: 100dvh;           /* avoid page scrollbars; app itself can scroll */
 }
 
 /* Centers the fixed-size app */
@@ -37,7 +37,7 @@ body{
 
 /* Fixed-size app container */
 .app-shell{
-  position: relative;           /* containing block for absolute nav/content */
+  position: relative;           /* containing block for absolute children */
   width: 320px;
   height: 568px;
   background: var(--bg);
@@ -52,10 +52,7 @@ body{
    Reserve space at the bottom for the nav bar (its height). */
 .app-content{
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 64px;                 /* must match .app-nav height */
+  inset: 0 0 64px 0;            /* top, right, bottom, left; bottom = nav height */
   padding: 12px;
   overflow: auto;               /* scrolls within the app, not the page */
   -webkit-overflow-scrolling: touch;
@@ -84,7 +81,7 @@ h1, h2{
   left: 0;
   right: 0;
   bottom: 0;
-  height: 64px;                 /* keep in sync with .app-content bottom */
+  height: 64px;                 /* keep in sync with .app-content bottom inset */
   background: var(--nav);
   color: var(--on-nav);
 }
@@ -110,8 +107,13 @@ h1, h2{
   border-radius: 10px;
   outline: none;
 }
+
+/* Hover and active/current states */
 .nav-item:hover{
   background: color-mix(in srgb, var(--on-nav) 12%, transparent);
+}
+.nav-item[aria-current="page"]{
+  background: color-mix(in srgb, var(--on-nav) 18%, transparent);
 }
 .nav-item:focus-visible{
   outline: 2px solid var(--focus);
