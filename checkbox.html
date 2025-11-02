@@ -17,8 +17,14 @@
 
       <main id="content" class="app-content" role="main">
         <section class="card" tabindex="-1">
-          <h1>Checkbox</h1>
-          <p>Place your checklist features here. This page is separate from Home and Socials.</p>
+          <h1>Energy-saving tasks</h1>
+          <p>Turn off idle lights and optimize thermostats to save energy.</p>
+        </section>
+
+        <section class="card" id="tasks-card">
+          <h2>To‑dos</h2>
+          <div id="tasks" aria-live="polite"></div>
+          <div id="tasks-empty" hidden>All set! No energy-saving tasks right now.</div>
         </section>
       </main>
 
@@ -45,5 +51,9 @@
       </header>
     </div>
   </div>
+
+  <!-- Frontend scripts -->
+  <script src="scripts/api.js" defer></script>
+  <script src="scripts/checkbox.js" defer></script>
 </body>
 </html>
