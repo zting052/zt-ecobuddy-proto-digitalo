@@ -151,34 +151,41 @@ h1, h2{
   height: 77px;                 /* exact height */
   background: var(--nav);
   color: var(--on-nav);
-  border-top-left-radius: 35px;  /* rounded top corners like screenshot */
+  border-top-left-radius: 35px; /* rounded top corners */
   border-top-right-radius: 35px;
-  overflow: hidden;              /* clip children to rounded corners */
+  overflow: hidden;             /* clip children to rounded corners */
 }
 
-/* Center icons vertically, keep horizontal spacing */
+/* Center icons vertically by stretching li to full height and
+   centering the anchor within each li */
 .nav-list{
   margin: 0;
   height: 100%;
   padding: 0 8px;
   list-style: none;
   display: flex;
-  align-items: center;           /* vertical center */
-  justify-content: space-around; /* horizontal spacing */
+  align-items: stretch;         /* stretch li to full bar height */
+  justify-content: space-around;
   gap: 4px;
+}
+.nav-list > li{
+  height: 100%;
+  display: flex;                /* create a centering context for the anchor */
+  align-items: center;          /* center anchor vertically */
 }
 
 .nav-item{
-  display: flex;
-  align-items: center;           /* vertical center icon within item */
+  display: inline-flex;
+  align-items: center;          /* center icon vertically */
   justify-content: center;
-  width: 56px;                   /* >= 44x44 tap target */
-  height: 100%;                  /* match nav height for true centering */
+  width: 56px;                  /* >= 44x44 tap target */
+  height: 100%;                 /* fill the li (and thus the bar) */
   min-height: 44px;
   color: inherit;
   text-decoration: none;
   border-radius: 10px;
   outline: none;
+  margin: 0;                    /* avoid accidental vertical offsets */
 }
 
 /* Image icons in nav: tint to light beige and slightly soften */
