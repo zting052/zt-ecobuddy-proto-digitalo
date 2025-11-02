@@ -1,117 +1,75 @@
-// EcoBuddy Progress & Level System
-// Stores state in localStorage and exposes a simple API + events.
-// Events: eco:progress, eco:newPlant, eco:levelUp
+// Server-backed Progress & Level System
+// Emits: eco:progress, eco:newPlant, eco:levelUp
 
 (function () {
-  const KEY = "eb.progress.v1";
-  const MAX_LEVEL = 5;
-
-  const defaultState = () => ({
-    level: 1,
-    completed: 0,    // tasks completed in current level
-    plants: [],      // [{type, x, y}] percent positions within plot
-    totalCompleted: 0
-  });
-
-  function load() {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (!raw) return defaultState();
-      const parsed = JSON.parse(raw);
-      return { ...defaultState(), ...parsed };
-    } catch {
-      return defaultState();
-    }
-  }
-
-  function save(state) {
-    localStorage.setItem(KEY, JSON.stringify(state));
-    dispatch("eco:progress", { state });
-  }
-
-  function tasksRequired(level) {
-    return 5 + (Math.max(1, level) - 1) * 2; // 5,7,9,11,13...
-  }
-
-  function paletteForLevel(level) {
-    // cumulative palette by level
-    const levels = {
-      1: ["potato"],
-      2: ["potato", "berry"],
-      3: ["potato", "berry", "sunflower"],
-      4: ["potato", "berry", "sunflower", "dandelion"],
-      5: ["potato", "berry", "sunflower", "dandelion", "rose"],
-    };
-    return levels[Math.min(MAX_LEVEL, Math.max(1, level))];
-  }
-
-  function randomBetween(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
-  function randomPosition() {
-    // Keep a gentle margin inside the plot
-    const x = randomBetween(6, 88);  // %
-    const y = randomBetween(15, 78); // %
-    return { x, y };
-  }
-
-  function choose(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
+  const listenersReady = new Set();
 
   function dispatch(name, detail) {
     window.dispatchEvent(new CustomEvent(name, { detail }));
   }
 
-  const API = {
-    init() {
-      const s = load();
-      save(s);
-      return s;
-    },
-    resetAll() {
-      const s = defaultState();
-      save(s);
-      return s;
-    },
-    getState() {
-      return load();
-    },
-    tasksRequired,
-    paletteForLevel,
-    taskCompleted() {
-      const s = load();
-      const palette = paletteForLevel(s.level);
-      const type = choose(palette);
-      const pos = randomPosition();
-      s.completed += 1;
-      s.totalCompleted += 1;
-      s.plants.push({ type, ...pos });
+  function ensureListeners() {
+    if (listenersReady.has("ready")) return;
+    listenersReady.add("ready");
+    // Also react to auth changes: after login, fetch fresh progress.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") EcoProgress.refresh().catch(()=>{});
+    });
+  }
 
-      const required = tasksRequired(s.level);
-      let leveledUp = false;
+  const EcoProgress = {
+    _state: null,
 
-      if (s.completed >= required) {
-        // Level up
-        s.level = Math.min(MAX_LEVEL, s.level + 1);
-        s.completed = 0;
-        s.plants = [];
-        leveledUp = true;
+    async init() {
+      ensureListeners();
+      return this.refresh();
+    },
+
+    async refresh() {
+      try {
+        const data = await API.getProgress();
+        this._state = {
+          level: data.level,
+          completed: data.completed,
+          required: data.required,
+          totalCompleted: data.totalCompleted,
+          unlock: data.unlock,
+          plants: data.plants || []
+        };
+        dispatch("eco:progress", { state: this._state });
+        return this._state;
+      } catch (e) {
+        // Not signed in or server error
+        this._state = null;
+        dispatch("eco:progress", { state: null, error: e.message });
+        return null;
       }
+    },
 
-      save(s);
+    getState() { return this._state; },
 
-      if (leveledUp) {
-        dispatch("eco:levelUp", { state: s });
+    async taskCompleted() {
+      const res = await API.taskCompleted();
+      this._state = {
+        level: res.state.level,
+        completed: res.state.completed,
+        required: res.state.required,
+        totalCompleted: res.state.totalCompleted,
+        unlock: res.state.unlock,
+        plants: res.state.plants || []
+      };
+      if (res.leveledUp) {
+        dispatch("eco:levelUp", { state: this._state });
       } else {
-        dispatch("eco:newPlant", { plant: s.plants[s.plants.length - 1], state: s });
+        // last added plant is implied on server; for UI, just re-render
+        dispatch("eco:newPlant", { state: this._state });
       }
-      return { leveledUp, state: s };
+      dispatch("eco:progress", { state: this._state });
+      return res;
     }
   };
 
-  window.EcoProgress = API;
-  // Auto-init
-  API.init();
+  window.EcoProgress = EcoProgress;
+  // Auto-init but ignore errors if not logged in
+  EcoProgress.init().catch(()=>{});
 })();
