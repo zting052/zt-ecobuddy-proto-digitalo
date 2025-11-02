@@ -142,6 +142,23 @@ app.post("/api/progress/task-completed", requireAuth, (req, res) => {
   res.json({ ok: true, leveledUp, state });
 });
 
+// Google Home mock endpoints (dev only)
+app.get("/api/google/status", requireAuth, (req, res) => {
+  const linked = req.session.googleLinked || false;
+  const accountName = linked ? "Google Home (dev)" : "";
+  res.json({ linked, accountName });
+});
+
+app.post("/api/google/mock-link", requireAuth, (req, res) => {
+  req.session.googleLinked = true;
+  res.json({ ok: true, linked: true, accountName: "Google Home (dev)" });
+});
+
+app.post("/api/google/unlink", requireAuth, (req, res) => {
+  req.session.googleLinked = false;
+  res.json({ ok: true, linked: false });
+});
+
 app.listen(PORT, () => {
   console.log(`EcoBuddy backend running at http://localhost:${PORT}`);
 });

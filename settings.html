@@ -52,6 +52,22 @@
                 </div>
               </div>
             </div>
+
+            <div class="setting-row" id="google-home-section" style="flex-direction:column; align-items:stretch; gap:10px; display:none;">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <strong>Google Home</strong>
+                <span id="google-status" style="opacity:.85;">Not linked</span>
+              </div>
+              <div id="google-link-controls" style="display:grid; gap:8px;">
+                <button id="btn-google-link" class="btn" style="background:#2563eb;">Pair Google Home (dev)</button>
+              </div>
+              <div id="google-unlink-controls" style="display:none;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <span>Linked to <strong id="google-account-name"></strong></span>
+                  <button id="btn-google-unlink" class="btn" style="background:#6b7280;">Unlink</button>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </main>
