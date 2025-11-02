@@ -23,35 +23,41 @@ body{
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   display: grid;
-  place-items: center;
+  place-items: center;          /* centers the app on the page */
+  min-height: 100dvh;           /* avoid page scrollbars */
 }
 
-/* Visually centers the fixed-size app */
+/* Centers the fixed-size app */
 .stage{
   width: 100%;
-  height: 100svh;
+  height: 100%;
   display: grid;
   place-items: center;
 }
 
 /* Fixed-size app container */
 .app-shell{
+  position: relative;           /* containing block for absolute nav/content */
   width: 320px;
   height: 568px;
   background: var(--bg);
   border-radius: 18px;
-  overflow: hidden; /* keep contents clipped within fixed area */
+  overflow: hidden;             /* clip contents to the app bounds */
   box-shadow:
     0 8px 24px rgba(0,0,0,0.25),
     0 2px 8px rgba(0,0,0,0.2);
-  display: grid;
-  grid-template-rows: 1fr auto; /* content grows, nav pinned to bottom */
 }
 
-/* Main scroll area within fixed-size shell */
+/* Scrollable content area inside the fixed shell.
+   Reserve space at the bottom for the nav bar (its height). */
 .app-content{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 64px;                 /* must match .app-nav height */
   padding: 12px;
-  overflow: auto; /* scroll if content exceeds 320x568 minus nav */
+  overflow: auto;               /* scrolls within the app, not the page */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -72,27 +78,32 @@ h1, h2{
   line-height: 1.2;
 }
 
-/* Navbar now sits at bottom inside the fixed app area */
+/* Nav pinned to bottom of the fixed app area */
 .app-nav{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;                 /* keep in sync with .app-content bottom */
   background: var(--nav);
   color: var(--on-nav);
 }
 
 .nav-list{
   margin: 0;
+  height: 100%;
   padding: 0 8px;
   list-style: none;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  min-height: 56px;
   gap: 4px;
 }
 
 .nav-item{
   display: grid;
   place-items: center;
-  width: 56px;   /* ensures tap target >= 44x44 */
+  width: 56px;                  /* ensures tap target >= 44x44 */
   height: 44px;
   color: inherit;
   text-decoration: none;
