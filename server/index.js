@@ -9,7 +9,7 @@ import { homeAssistantProvider } from "./providers/homeassistant.js";
 const PORT = process.env.PORT || 8787;
 const SESSION_SECRET = process.env.SESSION_SECRET || "dev-secret-change-me";
 const PROVIDER_LIGHTS = (process.env.PROVIDER_LIGHTS || "mock").toLowerCase();
-// Thermostats use Nest when connected, else fallback (mock)
+
 const LIGHTS =
   PROVIDER_LIGHTS === "homeassistant"
     ? homeAssistantProvider({
@@ -31,7 +31,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: "lax" // works on localhost cross-port navigations
+      sameSite: "lax"
     }
   })
 );
@@ -48,15 +48,12 @@ app.get("/auth/google/callback", async (req, res) => {
   if (!code) return res.status(400).send("Missing code");
   try {
     const { tokens, email } = await google.handleCallback(code);
-    // Persist minimal info in session
     req.session.google = {
       email: email || "",
       refresh_token: tokens.refresh_token,
-      // store last access_token for convenience; refresh when needed
       access_token: tokens.access_token,
       expiry_date: tokens.expiry_date
     };
-    // Redirect user back to Settings or provided returnTo
     const dest = state && typeof state === "string" ? state : "/settings.html";
     res.redirect(dest);
   } catch (e) {
@@ -118,7 +115,7 @@ function deriveTasks(devices) {
       name: t.name,
       ambientC: t.ambientC,
       currentFan: t.fanSpeed || "auto",
-      suggestedSetpointC: Math.min(t.ambientC - 1, 25) // simple nudge
+      suggestedSetpointC: Math.min(t.ambientC - 1, 25)
     }));
 
   return { lightTasks, thermostatTasks };
@@ -150,7 +147,6 @@ app.post("/api/thermostats/:id/adjust", async (req, res) => {
   }
   try {
     const accessToken = await google.getFreshAccessToken(g.refresh_token);
-    // SDM uses full resource name for device ID so we stored that in id
     await nest.setCoolSetpoint({ deviceName: req.params.id, accessToken, coolCelsius: setpointC });
     await nest.maybeSetFan({ deviceName: req.params.id, accessToken, fanSpeed });
     res.json({ ok: true });
