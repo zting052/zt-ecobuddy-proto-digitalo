@@ -4,6 +4,13 @@
 
   function renderEmpty(show) { emptyEl.hidden = !show; }
 
+  function afterSuccess() {
+    // Count toward levelling system
+    if (window.EcoProgress && typeof window.EcoProgress.taskCompleted === "function") {
+      try { window.EcoProgress.taskCompleted(); } catch {}
+    }
+  }
+
   function taskRow({ id, title, details, cta, action }) {
     const row = document.createElement("div");
     row.className = "task-row";
@@ -27,7 +34,8 @@
       btn.textContent = "Working…";
       try {
         await action();
-        row.remove(); // remove task on success
+        afterSuccess();
+        row.remove();
         if (!tasksEl.children.length) renderEmpty(true);
       } catch (e) {
         btn.disabled = false;
@@ -90,6 +98,7 @@
       btn.textContent = "Working…";
       try {
         await API.adjustThermostat({ id, setpointC, fanSpeed: fan });
+        afterSuccess();
         row.remove();
         if (!tasksEl.children.length) renderEmpty(true);
       } catch (e) {
@@ -149,6 +158,7 @@
 
   async function load() {
     injectStyles();
+    if (!tasksEl) return;
     tasksEl.textContent = "Loading…";
     try {
       const data = await API.getTasks();
@@ -181,6 +191,6 @@
     }
   }
 
-  document.readyState === "loading" ?
+  document.readyState === "loading" ? 
     document.addEventListener("DOMContentLoaded", load) : load();
 })();
