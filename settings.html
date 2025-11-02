@@ -10,8 +10,14 @@
   <a class="skip-link" href="#content">Skip to content</a>
 
   <div class="stage">
-    <div class="app-shell" role="application" aria-label="App">
-      <!-- No settings icon on this page per requirements -->
+    <div class="app-shell has-settings-button" role="application" aria-label="App">
+      <!-- Back button (top-left). Uses history.back() with fallback to Home -->
+      <a href="index.html" rel="prev" class="back-button" aria-label="Back" title="Back"
+         onclick="if (history.length > 1) { history.back(); return false; }">
+        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </a>
 
       <main id="content" class="app-content" role="main">
         <section class="card" tabindex="-1">
