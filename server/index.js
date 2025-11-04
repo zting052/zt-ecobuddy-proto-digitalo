@@ -4,8 +4,10 @@ import session from "express-session";
 import SQLiteStoreFactory from "connect-sqlite3";
 import bcrypt from "bcryptjs";
 import { db, getUserByUsername, createUser, getProgress, setProgress, listPlants, addPlant, clearPlants } from "./db.js";
+import { mockProvider } from "./providers/mock.js";
 
 const SQLiteStore = SQLiteStoreFactory(session);
+const provider = mockProvider();
 
 const PORT = process.env.PORT || 8787;
 const SESSION_SECRET = process.env.SESSION_SECRET || "dev-secret-change-me";
@@ -140,6 +142,71 @@ app.post("/api/progress/task-completed", requireAuth, (req, res) => {
   };
 
   res.json({ ok: true, leveledUp, state });
+});
+
+// Tasks endpoint (uses mock provider)
+app.get("/api/tasks", requireAuth, async (req, res) => {
+  try {
+    const devices = await provider.getDevices();
+    // Filter idle lights (on state but should be off)
+    const lightTasks = devices.lights.filter(l => l.on).map(l => ({
+      id: l.id,
+      name: l.name,
+      room: l.room,
+      on: l.on
+    }));
+    // Thermostat tasks: ones with ambient temp significantly higher than setpoint
+    const thermostatTasks = devices.thermostats
+      .filter(t => t.ambientC > t.setpointC + 1.5)
+      .map(t => ({
+        id: t.id,
+        name: t.name,
+        ambientC: t.ambientC,
+        suggestedSetpointC: Math.max(18, t.ambientC - 2),
+        currentFan: t.fanSpeed
+      }));
+    res.json({ lightTasks, thermostatTasks });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post("/api/lights/:id/off", requireAuth, async (req, res) => {
+  try {
+    await provider.turnLightOff(req.params.id);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post("/api/thermostats/:id/adjust", requireAuth, async (req, res) => {
+  try {
+    const { setpointC, fanSpeed } = req.body || {};
+    await provider.adjustThermostat({ id: req.params.id, setpointC, fanSpeed });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Google Home pairing endpoints (dev mock)
+app.get("/api/google/status", requireAuth, (req, res) => {
+  const linked = req.session.googleLinked || false;
+  const accountName = linked ? req.session.googleAccountName || "user@example.com" : null;
+  res.json({ linked, accountName });
+});
+
+app.post("/api/google/mock-link", requireAuth, (req, res) => {
+  req.session.googleLinked = true;
+  req.session.googleAccountName = "demo-user@google.com";
+  res.json({ ok: true, linked: true, accountName: "demo-user@google.com" });
+});
+
+app.post("/api/google/unlink", requireAuth, (req, res) => {
+  req.session.googleLinked = false;
+  req.session.googleAccountName = null;
+  res.json({ ok: true, linked: false });
 });
 
 app.listen(PORT, () => {

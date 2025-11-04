@@ -37,5 +37,10 @@ const API = (() => {
         method: "POST",
         body: JSON.stringify({ setpointC, fanSpeed }),
       }),
+
+    // Google Home pairing (dev mock)
+    googleStatus: () => http("/api/google/status"),
+    googleMockLink: () => http("/api/google/mock-link", { method: "POST" }),
+    googleUnlink: () => http("/api/google/unlink", { method: "POST" }),
   };
 })();
